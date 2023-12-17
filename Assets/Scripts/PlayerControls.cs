@@ -28,110 +28,46 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             ""id"": ""75768866-1075-4232-842d-77a154150582"",
             ""actions"": [
                 {
-                    ""name"": ""Movement"",
-                    ""type"": ""Value"",
-                    ""id"": ""5a659a1a-149e-4509-a8af-5489053bcfa8"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""name"": ""SetPower"",
+                    ""type"": ""Button"",
+                    ""id"": ""a840bfe1-bfa9-4e26-831d-139b94ee95e4"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Aim"",
-                    ""type"": ""Value"",
-                    ""id"": ""6ed3800d-8af0-436c-b9c6-3e2bd29f551c"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""d326d8ea-6852-492f-8c65-23dc5ff5aa1e"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""WASD"",
-                    ""id"": ""0592b8d1-c6fe-4a95-b81a-ab04ea4c7ce4"",
-                    ""path"": ""2DVector"",
+                    ""id"": ""9a80e879-bb6e-4839-9956-dca7c03a3ea9"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""77db8a4e-eb62-420d-9fc1-44127fb01a8a"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""c2a95a80-8d41-4659-9864-61ff03c56f3b"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""fbd99e40-e90f-446f-9c25-941dbbbffdf6"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""fb0f1c4d-c0a6-4755-be54-d97f3e18ade1"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1dfb7641-a713-4746-878c-2636121c2490"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""Aim"",
+                    ""action"": ""SetPower"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""562bbe8f-5d6f-41dc-845e-7b46f26170c0"",
-                    ""path"": ""<Mouse>/position"",
+                    ""id"": ""78ed12ef-1850-4aa2-832e-167e4ed2a52d"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Aim"",
+                    ""action"": ""SetPower"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""401f485a-1009-4426-9a1c-44a825223c36"",
+                    ""path"": ""<Touchscreen>/Press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetPower"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -154,8 +90,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
-        m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_SetPower = m_Player.FindAction("SetPower", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -217,14 +152,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
-    private readonly InputAction m_Player_Movement;
-    private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_SetPower;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movement => m_Wrapper.m_Player_Movement;
-        public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        public InputAction @SetPower => m_Wrapper.m_Player_SetPower;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -234,22 +167,16 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
-            @Movement.started += instance.OnMovement;
-            @Movement.performed += instance.OnMovement;
-            @Movement.canceled += instance.OnMovement;
-            @Aim.started += instance.OnAim;
-            @Aim.performed += instance.OnAim;
-            @Aim.canceled += instance.OnAim;
+            @SetPower.started += instance.OnSetPower;
+            @SetPower.performed += instance.OnSetPower;
+            @SetPower.canceled += instance.OnSetPower;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
         {
-            @Movement.started -= instance.OnMovement;
-            @Movement.performed -= instance.OnMovement;
-            @Movement.canceled -= instance.OnMovement;
-            @Aim.started -= instance.OnAim;
-            @Aim.performed -= instance.OnAim;
-            @Aim.canceled -= instance.OnAim;
+            @SetPower.started -= instance.OnSetPower;
+            @SetPower.performed -= instance.OnSetPower;
+            @SetPower.canceled -= instance.OnSetPower;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -278,7 +205,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnMovement(InputAction.CallbackContext context);
-        void OnAim(InputAction.CallbackContext context);
+        void OnSetPower(InputAction.CallbackContext context);
     }
 }
