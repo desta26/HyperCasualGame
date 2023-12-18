@@ -3,24 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerJump : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Animator anim;
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private Slider powerBar;
 
-    [SerializeField] private float forceX, forceY;
+    private float forceX, forceY;
+
     private float tresholdX = 7f;
     private float tresholdY = 14f;
 
-    public bool setPower, didJump;
+    private bool setPower, didJump;
+
+    private float powerBarTreshold = 10f;
+    private float powerBarValue = 0f;
+
+    private void Start()
+    {
+        powerBar.minValue = 0;
+        powerBar.maxValue = 10f;
+        powerBar.value = powerBarValue;
+    }
 
     private void Update()
     {
         SetPower();
 
-        
+        //Debug.Log("velocity : " +rb.velocity.y);
     }
 
     public void OnSetPower(InputAction.CallbackContext context) {
@@ -52,6 +65,9 @@ public class PlayerJump : MonoBehaviour
             {
                 forceY = 13.5f;
             }
+
+            powerBarValue += powerBarTreshold * Time.deltaTime;
+            powerBar.value = powerBarValue;
         }
     }
     public void SetPower(bool setPower) {
@@ -63,7 +79,6 @@ public class PlayerJump : MonoBehaviour
 
     }
 
-    
 
     private void Jump()
     {
@@ -71,6 +86,11 @@ public class PlayerJump : MonoBehaviour
         forceX = forceY = 0f;
 
         didJump = true;
+
+        anim.SetBool("Jump", didJump);
+
+        powerBarValue = 0f;
+        powerBar.value = powerBarValue;
         
     }
 
@@ -79,9 +99,20 @@ public class PlayerJump : MonoBehaviour
         if (didJump) {
             didJump = false;
 
-            if (other.tag == "Platform") {
-                Debug.Log("Landed on platform after jumping");
+            anim.SetBool("Jump", didJump);
+
+            if (other.TryGetComponent<Platform>(out Platform _platform))
+            {
+                if (_platform.canAddScore)
+                {
+                    _platform.canAddScore = false;
+
+                    GameManager.Instance.AddScore(1);
+                    GameManager.Instance.CreateNewPlatformAndLerp(other.transform.position.x);
+                }
             }
         }
+
+        
     }
 }
