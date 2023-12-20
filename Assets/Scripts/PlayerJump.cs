@@ -2,27 +2,47 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerJump : MonoBehaviour
 {
+    [Header("Jump Physics Component")]
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private Animator anim;
-    [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private Slider powerBar;
-
-    private float forceX, forceY;
+    [SerializeField] private GameObject landedOnPlatform;
+    [SerializeField] private float forceX, forceY;
 
     private float tresholdX = 7f;
     private float tresholdY = 14f;
 
-    private bool setPower, didJump;
+    [Header("Animation")]
+    [SerializeField] private Animator anim;
+    [SerializeField] private bool setPower, didJump, alreadyJump;
 
+    [Header("Input Manager")]
+    [SerializeField] private PlayerInput playerInput;
+
+    [Header("HUD")]
+    [SerializeField] private Slider powerBar;
     private float powerBarTreshold = 10f;
     private float powerBarValue = 0f;
 
+    [Header("Audio Components")]
+    [SerializeField] private AudioSource audioSource;
+
+    
+    [Header("Events")]
+    public UnityEvent OnJump;
+    public UnityEvent OnSetPowerJump;
+    public UnityEvent OnLanded;
+
     private void Start()
+    {
+        InitializeJumpBar();
+    }
+
+    private void InitializeJumpBar()
     {
         powerBar.minValue = 0;
         powerBar.maxValue = 10f;
@@ -31,27 +51,12 @@ public class PlayerJump : MonoBehaviour
 
     private void Update()
     {
+        
         SetPower();
-
-        //Debug.Log("velocity : " +rb.velocity.y);
     }
 
-    public void OnSetPower(InputAction.CallbackContext context) {
-        switch (context.phase)
-        {
-            case InputActionPhase.Started:
-                //Debug.Log("started");
-                break;
-            case InputActionPhase.Performed:
-                //Debug.Log("performed");
-                SetPower(true);
-                break;
-            case InputActionPhase.Canceled:
-                //Debug.Log("cancel");
-                SetPower(false);
-                break;
-        }   
-    }
+    
+
     private void SetPower() {
         if (setPower) {
             forceX += tresholdX * Time.deltaTime;
@@ -66,8 +71,7 @@ public class PlayerJump : MonoBehaviour
                 forceY = 13.5f;
             }
 
-            powerBarValue += powerBarTreshold * Time.deltaTime;
-            powerBar.value = powerBarValue;
+            OnSetPowerJump?.Invoke();
         }
     }
     public void SetPower(bool setPower) {
@@ -87,11 +91,26 @@ public class PlayerJump : MonoBehaviour
 
         didJump = true;
 
-        anim.SetBool("Jump", didJump);
+        OnJump?.Invoke();
 
         powerBarValue = 0f;
         powerBar.value = powerBarValue;
         
+    }
+
+    public void EventAnimation() {
+        anim.SetBool("Jump", didJump);
+    }
+
+    public void EventSound(AudioClip clip) {
+        audioSource.clip = null;
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+    public void EventUpdateJumpBar() {
+        powerBarValue += powerBarTreshold * Time.deltaTime;
+        powerBar.value = powerBarValue;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -99,20 +118,35 @@ public class PlayerJump : MonoBehaviour
         if (didJump) {
             didJump = false;
 
-            anim.SetBool("Jump", didJump);
+            OnLanded?.Invoke();
 
             if (other.TryGetComponent<Platform>(out Platform _platform))
             {
                 if (_platform.canAddScore)
                 {
                     _platform.canAddScore = false;
+                    
 
                     GameManager.Instance.AddScore(1);
                     GameManager.Instance.CreateNewPlatformAndLerp(other.transform.position.x);
                 }
+
+                landedOnPlatform = null;
+                landedOnPlatform = _platform.gameObject;
+                //landedOnPlatform.GetComponent<Rigidbody>().isKinematic = false;
             }
         }
 
         
+
+        if (other.tag == "DeadZone")
+        {
+            Destroy(gameObject);
+            GameManager.Instance.GameOver();
+        }
+
+
     }
+
+    
 }
